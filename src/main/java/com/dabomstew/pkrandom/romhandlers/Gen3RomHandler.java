@@ -2465,9 +2465,9 @@ public class Gen3RomHandler extends AbstractGBRomHandler {
                     }
                 }
 
-                // There's no previous level so make it at least 25
+                // There's no previous level so make it at least 10
                 if (prevLevel == 0) {
-                    ev.extraInfo = this.random.nextInt(16) + 25;
+                    ev.extraInfo = this.random.nextInt(20) + 10;
                     // For low BST, divide that level in half
                     if (ev.from.bst() < 300) {
                         ev.extraInfo /= 2;

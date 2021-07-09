@@ -101,8 +101,28 @@ public enum EvolutionType {
         return reverseIndexes[generation - 1][index];
     }
 
+    public static int getLevelChoiceFromGeneration(int generation) {
+        switch(generation) {
+            case 1:
+                return 0;
+            case 2:
+                return 1;
+            case 3:
+            case 4:
+            case 5:
+                return 3;
+            default:
+                return 0;
+        }
+    }
+
     public static EvolutionType randomFromGeneration(Random random, int generation) {
-        int choice = random.nextInt(generationCount(generation));
+        int choice;
+        if (random.nextInt(100) < 92) {
+            choice = getLevelChoiceFromGeneration(generation);
+        } else {
+            choice = random.nextInt(generationCount(generation));
+        }
         EvolutionType et = reverseIndexes[generation-1][choice+1];
         while (bannedMethods.contains(et)) {
             choice = random.nextInt(generationCount(generation));
