@@ -1289,13 +1289,19 @@ public abstract class AbstractRomHandler implements RomHandler {
             for (Trainer t : trainersInGroup) {
                 if (buffElite && (t.getTag().startsWith("ELITE") 
                     || t.getTag().startsWith("UBER"))) {
+                    int index = 0;
                     for (TrainerPokemon tp : t.getPokemon()) {
-                        tp.pokemon = pickEliteReplacement(tp.pokemon, typeForGroup);
+                        // Only 3 of the pokes will be monotype
+                        if (index++ < 3) {
+                            tp.pokemon = pickEliteReplacement(tp.pokemon, typeForGroup);
+                        } else {
+                            tp.pokemon = pickEliteReplacement(tp.pokemon, null);
+                        }
                         tp.resetMoves = true;
                         applyChangeToTrainerPoke(tp, randomHeldItem, levelModifier);
                     }
                 } else if (buffElite && t.getTag() != null && t.getTag().startsWith("CHAMPION")) {
-                    Integer[] indices = { 1, 2, 3, 4, 5, 6 };
+                    Integer[] indices = { 0, 1, 2, 3, 4, 5 };
                     List<Integer> indicesList = Arrays.asList(indices);
                     Collections.shuffle(indicesList);
                     int index = 0;
