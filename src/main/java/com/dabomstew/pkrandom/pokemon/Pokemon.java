@@ -543,6 +543,10 @@ public class Pokemon implements Comparable<Pokemon> {
     public int bst() {
         return hp + attack + defense + spatk + spdef + speed;
     }
+
+    public int realBst() {
+        return hp + defense + spdef + speed + Math.max(attack, spatk);
+    }
     
     public int gen1Bst() {
         return hp + attack + defense + special + speed;

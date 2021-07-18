@@ -53,6 +53,7 @@ public abstract class AbstractRomHandler implements RomHandler {
     protected Map<String, Type> groupTypesMap = new HashMap<String, Type>();
     private HashMap<Pokemon, Pokemon> trainerTranslateMap;
     private PokemonSet cachedReplacementLists;
+    private PokemonSet sortedPokemon;
     private PokemonSet cachedEliteReplacementLists;
     private List<Type> typeInGame;
 
@@ -1148,11 +1149,25 @@ public abstract class AbstractRomHandler implements RomHandler {
         List<Trainer> scrambledTrainers = new ArrayList<Trainer>(currentTrainers);
         Collections.shuffle(scrambledTrainers, this.random);
 
+        Comparator<Pokemon> comparator = new Comparator<Pokemon>() {
+            @Override
+            public int compare(Pokemon poke1, Pokemon poke2) {
+                return poke2.realBst() - poke1.realBst();
+            }
+        };
+
+        sortedPokemon = new PokemonSet();
+        sortedPokemon.addAll(mainPokemonList.stream()
+            .sorted(comparator)
+            .collect(Collectors.toList()));
+
         cachedReplacementLists = new PokemonSet();
         cachedReplacementLists.addAll(noLegendaries ? noLegendaryList : mainPokemonList);
         cachedEliteReplacementLists = new PokemonSet();
         cachedEliteReplacementLists.addAll(mainPokemonList.stream()
-            .filter(pk -> pk.isBigPoke(isGen1()) || pk.isLegendary()).collect(Collectors.toList()));
+            .sorted(comparator)
+            .limit(50)
+            .collect(Collectors.toList()));
         typeWeightings = new TreeMap<Type, Integer>();
         totalTypeWeighting = 0;
 
@@ -1170,10 +1185,19 @@ public abstract class AbstractRomHandler implements RomHandler {
             if (!assignedTrainers.contains(t)) {
                 if (buffElite && t.getTag() != null &&
                     (t.getTag().startsWith("ELITE") 
-                    || t.getTag().startsWith("CHAMPION")
                     || t.getTag().startsWith("UBER"))) {
                     for (TrainerPokemon tp : t.getPokemon()) {
                         tp.pokemon = pickEliteReplacement(tp.pokemon, null);
+                        tp.resetMoves = true;
+                        applyChangeToTrainerPoke(tp, randomHeldItem, levelModifier);
+                    }
+                } else if (buffElite && t.getTag() != null && t.getTag().startsWith("CHAMPION")) {
+                    Integer[] indices = { 1, 2, 3, 4, 5, 6 };
+                    List<Integer> indicesList = Arrays.asList(indices);
+                    Collections.shuffle(indicesList);
+                    int index = 0;
+                    for (TrainerPokemon tp : t.getPokemon()) {
+                        tp.pokemon = sortedPokemon.getPokes().get(indicesList.get(index++));
                         tp.resetMoves = true;
                         applyChangeToTrainerPoke(tp, randomHeldItem, levelModifier);
                     }
@@ -1254,7 +1278,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                 }
                 usedEliteTypes.add(typeForGroup);
             }
-            if (group.equals("CHAMPION") || group.startsWith("UBER")) {
+            if (group.startsWith("UBER")) {
                 while (usedUberTypes.contains(typeForGroup) || (buffElite
                 && cachedEliteReplacementLists.sizeByType(typeForGroup) == 0)) {
                     typeForGroup = pickType(weightByFrequency, noLegendaries);
@@ -1264,10 +1288,19 @@ public abstract class AbstractRomHandler implements RomHandler {
             // Themed groups just have a theme, no special criteria
             for (Trainer t : trainersInGroup) {
                 if (buffElite && (t.getTag().startsWith("ELITE") 
-                    || t.getTag().startsWith("CHAMPION")
                     || t.getTag().startsWith("UBER"))) {
                     for (TrainerPokemon tp : t.getPokemon()) {
                         tp.pokemon = pickEliteReplacement(tp.pokemon, typeForGroup);
+                        tp.resetMoves = true;
+                        applyChangeToTrainerPoke(tp, randomHeldItem, levelModifier);
+                    }
+                } else if (buffElite && t.getTag() != null && t.getTag().startsWith("CHAMPION")) {
+                    Integer[] indices = { 1, 2, 3, 4, 5, 6 };
+                    List<Integer> indicesList = Arrays.asList(indices);
+                    Collections.shuffle(indicesList);
+                    int index = 0;
+                    for (TrainerPokemon tp : t.getPokemon()) {
+                        tp.pokemon = sortedPokemon.getPokes().get(indicesList.get(index++));
                         tp.resetMoves = true;
                         applyChangeToTrainerPoke(tp, randomHeldItem, levelModifier);
                     }

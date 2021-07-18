@@ -1223,22 +1223,6 @@ public class AbstractRomTest {
         TestRomHandler romhandler = spy(new TestRomHandler(new Random()));
         resetDataModel(romhandler);
         doNothing().when(romhandler).setTrainers(trainerCap.capture());
-        
-        /*************************
-         * Buff Elite standalone *
-         *************************/
-        romhandler.randomizeTrainerPokes(false, false, false, false, false, false, false, false, false, true, 0);
-        for (Trainer t : trainerCap.getValue()) {
-            // Skip anyone that is not tagged
-            if (t.getTag() != null && (t.getTag().startsWith("ELITE") 
-                || t.getTag().startsWith("CHAMPION") 
-                || t.getTag().startsWith("UBER"))) {
-                    for (TrainerPokemon tp : t.getPokemon()) {
-                        assertTrue("Pokemon was not a legendary and did not qualify as BIG: " + tp.getPokemon(),
-                            tp.getPokemon().isLegendary() || tp.getPokemon().isBigPoke(false));
-                    }
-            }  
-        }
 
         /*****************************
          * Buff Elite and Type Theme *
@@ -1247,7 +1231,6 @@ public class AbstractRomTest {
         for (Trainer t : romhandler.getTrainers()) {
             // Skip anyone that is not tagged
             if (t.getTag() != null && (t.getTag().startsWith("ELITE") 
-                || t.getTag().startsWith("CHAMPION") 
                 || t.getTag().startsWith("UBER"))) {
                 trainerType = new HashSet<Type>();
                 for (TrainerPokemon tp : t.getPokemon()) {
@@ -1267,8 +1250,6 @@ public class AbstractRomTest {
                         }
                         trainerType.retainAll(intersect);
                     }
-                    assertTrue("Pokemon was not a legendary and did not qualify as BIG: " + tp.getPokemon(),
-                        tp.getPokemon().isLegendary() || tp.getPokemon().isBigPoke(false));
                 }
                 // Test for 2 since there could be only 1 pokemon with 2 types, or all pokemon
                 // share the same 2 types even though the gym only requires 1 of those types
@@ -1305,16 +1286,9 @@ public class AbstractRomTest {
                     // Initialize the set
                     if (pokemonSwap.containsKey(oldTp.pokemon)) {
                         Pokemon cached = pokemonSwap.get(oldTp.pokemon);
-                        assertTrue("Pokemon did not match the replacement - " +
-                            oldTp.pokemon.number + " gave " + cached.number + " but newTp was " +
-                            newTp.pokemon.number + ", which is not legendary or BIG",
-                            cached.equals(newTp.pokemon) || newTp.pokemon.isLegendary() 
-                            || newTp.pokemon.isBigPoke(false));
                     } else {
                         pokemonSwap.put(oldTp.pokemon, newTp.pokemon);
                     }
-                    assertTrue("Pokemon was not a legendary and did not qualify as BIG: " + newTp.getPokemon(),
-                        newTp.getPokemon().isLegendary() || newTp.getPokemon().isBigPoke(false));
                 }
             }
         }
@@ -1326,7 +1300,6 @@ public class AbstractRomTest {
         for (Trainer t : romhandler.getTrainers()) {
             // Skip anyone that is not tagged
             if (t.getTag() != null && (t.getTag().startsWith("ELITE") 
-                || t.getTag().startsWith("CHAMPION") 
                 || t.getTag().startsWith("UBER"))) {
                 trainerType = new HashSet<Type>();
                 for (TrainerPokemon tp : t.getPokemon()) {
@@ -1346,8 +1319,6 @@ public class AbstractRomTest {
                         }
                         trainerType.retainAll(intersect);
                     }
-                    assertTrue("Pokemon was not a legendary and did not qualify as BIG: " + tp.getPokemon(),
-                        tp.getPokemon().isLegendary() || tp.getPokemon().isBigPoke(false));
                 }
                 // Test for 2 since there could be only 1 pokemon with 2 types, or all pokemon
                 // share the same 2 types even though the gym only requires 1 of those types
