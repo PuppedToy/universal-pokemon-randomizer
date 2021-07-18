@@ -383,6 +383,7 @@ public class Gen4RomHandler extends AbstractDSRomHandler {
         pkmn.speed = stats[Gen4Constants.bsSpeedOffset] & 0xFF;
         pkmn.spatk = stats[Gen4Constants.bsSpAtkOffset] & 0xFF;
         pkmn.spdef = stats[Gen4Constants.bsSpDefOffset] & 0xFF;
+        pkmn.calcPreviousBST();
         // Type
         pkmn.primaryType = Gen4Constants.typeTable[stats[Gen4Constants.bsPrimaryTypeOffset] & 0xFF];
         pkmn.secondaryType = Gen4Constants.typeTable[stats[Gen4Constants.bsSecondaryTypeOffset] & 0xFF];

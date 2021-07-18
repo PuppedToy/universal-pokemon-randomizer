@@ -4256,7 +4256,7 @@ public abstract class AbstractRomHandler implements RomHandler {
         if (usePowerLevels) {
             // start with within 10% and add 5% either direction till we find
             // something
-            int currentBST = current.bstForPowerLevels();
+            int currentBST = current.previousBST;
             int minTarget = currentBST - currentBST / 10;
             int maxTarget = currentBST + currentBST / 10;
             List<Pokemon> canPick = new ArrayList<Pokemon>();

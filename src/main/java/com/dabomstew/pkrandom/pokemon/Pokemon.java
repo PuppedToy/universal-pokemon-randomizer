@@ -40,7 +40,7 @@ public class Pokemon implements Comparable<Pokemon> {
 
     public Type primaryType, secondaryType;
 
-    public int hp, attack, defense, spatk, spdef, speed, special;
+    public int hp, attack, defense, spatk, spdef, speed, special, previousBST;
 
     public int ability1, ability2, ability3;
 
@@ -92,6 +92,14 @@ public class Pokemon implements Comparable<Pokemon> {
 
     public Pokemon() {
         shuffledStatsOrder = Arrays.asList(0, 1, 2, 3, 4, 5);
+    }
+
+    public void calcPreviousBST() {
+        if (number == 292) {
+            this.previousBST = (attack + defense + spatk + spdef + speed) * 6 / 5;
+        } else {
+            this.previousBST = hp + attack + defense + spatk + spdef + speed;
+        }
     }
     
     // Select a type from the ones on this pokemon
@@ -639,6 +647,7 @@ public class Pokemon implements Comparable<Pokemon> {
 
     public void setHp(int hp) {
         this.hp = hp;
+        this.calcPreviousBST();
     }
 
     public int getAttack() {
@@ -647,6 +656,7 @@ public class Pokemon implements Comparable<Pokemon> {
 
     public void setAttack(int attack) {
         this.attack = attack;
+        this.calcPreviousBST();
     }
 
     public int getDefense() {
@@ -655,6 +665,7 @@ public class Pokemon implements Comparable<Pokemon> {
 
     public void setDefense(int defense) {
         this.defense = defense;
+        this.calcPreviousBST();
     }
 
     public int getSpatk() {
@@ -663,6 +674,7 @@ public class Pokemon implements Comparable<Pokemon> {
 
     public void setSpatk(int spatk) {
         this.spatk = spatk;
+        this.calcPreviousBST();
     }
 
     public int getSpdef() {
@@ -671,6 +683,7 @@ public class Pokemon implements Comparable<Pokemon> {
 
     public void setSpdef(int spdef) {
         this.spdef = spdef;
+        this.calcPreviousBST();
     }
 
     public int getSpeed() {
@@ -679,6 +692,7 @@ public class Pokemon implements Comparable<Pokemon> {
 
     public void setSpeed(int speed) {
         this.speed = speed;
+        this.calcPreviousBST();
     }
 
     public int getSpecial() {

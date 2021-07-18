@@ -859,6 +859,7 @@ public class Gen3RomHandler extends AbstractGBRomHandler {
         pkmn.speed = rom[offset + Gen3Constants.bsSpeedOffset] & 0xFF;
         pkmn.spatk = rom[offset + Gen3Constants.bsSpAtkOffset] & 0xFF;
         pkmn.spdef = rom[offset + Gen3Constants.bsSpDefOffset] & 0xFF;
+        pkmn.calcPreviousBST();
         // Type
         pkmn.primaryType = getTypeTableValue(offset + Gen3Constants.bsPrimaryTypeOffset) ;
         pkmn.secondaryType = getTypeTableValue(offset + Gen3Constants.bsSecondaryTypeOffset);

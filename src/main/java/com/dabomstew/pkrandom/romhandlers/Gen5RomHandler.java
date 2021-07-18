@@ -401,6 +401,7 @@ public class Gen5RomHandler extends AbstractDSRomHandler {
         pkmn.speed = stats[Gen5Constants.bsSpeedOffset] & 0xFF;
         pkmn.spatk = stats[Gen5Constants.bsSpAtkOffset] & 0xFF;
         pkmn.spdef = stats[Gen5Constants.bsSpDefOffset] & 0xFF;
+        pkmn.calcPreviousBST();
         // Type
         pkmn.primaryType = Gen5Constants.typeTable[stats[Gen5Constants.bsPrimaryTypeOffset] & 0xFF];
         pkmn.secondaryType = Gen5Constants.typeTable[stats[Gen5Constants.bsSecondaryTypeOffset] & 0xFF];

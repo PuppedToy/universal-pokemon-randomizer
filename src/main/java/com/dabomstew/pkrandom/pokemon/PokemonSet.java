@@ -239,7 +239,7 @@ public class PokemonSet {
     public Pokemon randomPokemonByPowerLevel(Pokemon current, boolean banSamePokemon, Random random, boolean pop) {
         // start with within 10% and add 20% either direction till we find
         // something
-        int currentBST = current.bstForPowerLevels();
+        int currentBST = current.previousBST;
         int minTarget = currentBST - currentBST / 10;
         int maxTarget = currentBST + currentBST / 10;
         Set<Pokemon> canPick = new TreeSet<Pokemon>();
