@@ -1,9 +1,11 @@
-package com.dabomstew.pkrandom;
+package com.dabomstew.pkrandom.settings;
 
 /*----------------------------------------------------------------------------*/
-/*--  SysConstants.java - contains constants not related to the             --*/
-/*--                      randomization process itself, such as those       --*/
-/*--                      relating to file I/O and the updating system.     --*/
+/*--  PredicateArray.java - represents an array of PredicatePairs that form --*/
+/*--                        a logical AND situation between two or more     --*/
+/*--                        PredicatePair objects.                          --*/
+/*--                        Enables a child SettingsOption object to define --*/
+/*--                        when its state is allowed to be changed         --*/
 /*--                                                                        --*/
 /*--  Part of "Universal Pokemon Randomizer" by Dabomstew                   --*/
 /*--  Pokemon and any associated names and the like are                     --*/
@@ -25,31 +27,39 @@ package com.dabomstew.pkrandom;
 /*--  along with this program. If not, see <http://www.gnu.org/licenses/>.  --*/
 /*----------------------------------------------------------------------------*/
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Optional;
 
-public class SysConstants {
+public class PredicateArray {
+    private ArrayList<PredicatePair> predicateArray;
+    private HashMap<SettingsOption, Boolean> predicatePairResults;
 
-    public static final String AUTOUPDATE_URL =
-            "http://pokehacks.dabomstew.com/randomizer/autoupdate/";
-    public static final String WEBSITE_URL = "http://pokehacks.dabomstew.com/randomizer/";
-    public static final int UPDATE_VERSION = 2010;
-    public static final String ROOT_PATH = getRootPath();
-    public static final String LINE_SEP = System.getProperty("line.separator");
-    public static final String customNamesFile = "customnames.rncn";
-    public static final String romOptionsFile = "romoptions.ini";
-
-    // OLD custom names files
-    public static final String tnamesFile = "trainernames.txt";
-    public static final String tclassesFile = "trainerclasses.txt";
-    public static final String nnamesFile = "nicknames.txt";
-
-    private static String getRootPath() {
-        try {
-            File fh = Utils.getExecutionLocation().getParentFile();
-            return fh.getAbsolutePath() + File.separator;
-        } catch (Exception e) {
-            return "./";
-        }
+    public PredicateArray(PredicatePair[] predicates) {
+        this.predicateArray = new ArrayList<PredicatePair>(Arrays.asList(predicates));
+        predicatePairResults = new HashMap<SettingsOption, Boolean>();
     }
 
+    public boolean isValueRandomizable(SettingsOption item) {
+        // See if item is in the predicateArray and then set the result
+        Optional<PredicatePair> match =
+                predicateArray.stream().filter(p -> p.getParent() == item).findFirst();
+
+        if (match.isPresent()) {
+            predicatePairResults.put(item, match.get().test(item));
+        }
+
+        // Cannot randomize until all parents have run and all results are true
+        if (predicatePairResults.size() == predicateArray.size()) {
+            return predicatePairResults.values().stream().allMatch(v -> v);
+        }
+
+        // Return false if all conditions fail
+        return false;
+    }
+
+    public void setChildren(SettingsOption item) {
+        predicateArray.forEach(p -> p.getParent().add(item));
+    }
 }

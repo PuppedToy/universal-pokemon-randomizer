@@ -32,6 +32,7 @@ public class SettingsOptionFactory {
     private SettingsMap settingsMap;
 
     private SettingsOptionFactory() {}
+
     public static SettingsOptionFactory getInstance() {
         if (instance == null) {
             instance = new SettingsOptionFactory();
@@ -43,15 +44,19 @@ public class SettingsOptionFactory {
         getInstance().settingsMap = refMap;
     }
 
-    public static <T> SettingsOptionComposite<T> createSettingsOption(SettingsOption.Builder builder) {
+    public static <T> SettingsOptionComposite<T> createSettingsOption(
+            SettingsOption.Builder builder) {
         SettingsOptionComposite<T> soc = builder.build();
         if (soc.getMatches().size() > 0) {
             soc.setIsChild(true);
-            soc.getMatches().forEach((match) -> match.getParent().add(soc));
+            soc.getMatches().forEach(match -> match.getParent().add(soc));
+        } else if (soc.getMultiMatches().size() > 0) {
+            soc.setIsChild(true);
+            soc.getMultiMatches().forEach(predicateArray -> predicateArray.setChildren(soc));
         } else {
             soc.setIsChild(false);
         }
-        getInstance().settingsMap.putOption(soc.getName(), soc); 
+        getInstance().settingsMap.putOption(soc.getName(), soc);
         return soc;
     }
 }
